@@ -1,5 +1,22 @@
 <?php
 require_once "Admin/config.php";
+session_start();
+$isLoggedIn = false;
+// check user login or not 
+if (isset($_SESSION['id'])) {
+  $isLoggedIn = true;
+}
+// fetch site data from table admin 
+$stmt = $conn->prepare("SELECT * FROM admin");
+$stmt->execute();
+$data = $stmt->fetch(PDO::FETCH_ASSOC);
+$address = $data['address'];
+$phone = $data['phone'];
+$yt = $data['youtube'];
+$fb = $data['facebook'];
+$x = $data['twitter'];
+$email = $data['contactEmail'];
+$logo = $data['logo'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,105 +25,88 @@ require_once "Admin/config.php";
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preload" as="image" href="Admin/uploads/<?= $logo ?>" />
+  <link rel="preload" as="image" href="assets/images/hero-banner.jpg" />
+  <meta name="description" content="Explore the rich cultural heritage of Bharat through its ancient temples. Plan your trip to experience spirituality and architectural marvels.">
+  <meta name="keywords" content="Bharat, temple, tourism, cultural heritage, spirituality, architecture">
+  <meta name="author" content="Official Dev Vineet">
+  <meta property="og:title" content="Bharat Temple Tourism">
+  <meta property="og:description" content="Explore the rich cultural heritage of Bharat through its ancient temples. Plan your trip to experience spirituality and architectural marvels.">
+  <meta property="og:image" content="Admin/uploads/<?= $logo ?>">
+  <meta property="og:url" content="https://example.com/bharat-temple-tourism">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Bharat Temple Tourism">
+  <meta name="twitter:description" content="Explore the rich cultural heritage of Bharat through its ancient temples. Plan your trip to experience spirituality and architectural marvels.">
+  <meta name="twitter:image" content="Admin/uploads/<?= $logo ?>">
   <title>Bharat Temple Tourism</title>
-
-  <!-- 
-    - favicon
-  -->
-  <link rel="icon" href="/assets/images/favIcon.jpg" />
-
-  <!-- 
-    - custom css link
-  -->
+  <link rel="icon" href="Admin/uploads/<?= $logo ?>" />
   <link rel="stylesheet" href="./assets/css/style.css" />
-
-  <!-- 
-    - google font link
-  -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 
 <body id="top">
-  <!-- 
-    - #HEADER
-  -->
-
   <header class="header" data-header>
     <div class="overlay" data-overlay></div>
-
     <div class="header-top">
       <div class="container">
-        <a href="tel:+917983920962" class="helpline-box">
-          <div class="icon-box">
-            <ion-icon name="call-outline"></ion-icon>
-          </div>
 
-          <div class="wrapper">
-            <p class="helpline-title">For Further Inquires :</p>
-            <p class="helpline-number">+91-7983920962</p>
-          </div>
-        </a>
-
-        <a href="#" class="logo">
-          <img src="./assets/images/logo.svg" alt="Tourly logo" />
+        <a href="/" class="logo">
+          <img src="Admin/uploads/<?= $logo ?>" alt="Bharat Temple Tourism" />
         </a>
 
         <div class="header-btn-group">
-          <button class="search-btn" aria-label="Search">
-            <ion-icon name="search"></ion-icon>
-          </button>
-
+          <a href="tel:<?= $phone; ?>" class="helpline-box">
+            <div class="icon-box">
+              <ion-icon name="call-outline"></ion-icon>
+            </div>
+            <div class="wrapper">
+              <p class="helpline-title">For Further Inquires :</p>
+              <p class="helpline-number"><?= $phone; ?></p>
+            </div>
+          </a>
           <button class="nav-open-btn" aria-label="Open Menu" data-nav-open-btn>
             <ion-icon name="menu-outline"></ion-icon>
           </button>
         </div>
       </div>
     </div>
-
     <div class="header-bottom">
       <div class="container">
         <ul class="social-list">
           <li>
-            <a href="#" class="social-link">
+            <a href="<?= $fb ?>" class="social-link">
               <ion-icon name="logo-facebook"></ion-icon>
             </a>
           </li>
 
           <li>
-            <a href="#" class="social-link">
+            <a href="<?= $x ?>" class="social-link">
               <ion-icon name="logo-twitter"></ion-icon>
             </a>
           </li>
 
           <li>
-            <a href="#" class="social-link">
+            <a href="<?= $yt ?>" class="social-link">
               <ion-icon name="logo-youtube"></ion-icon>
             </a>
           </li>
         </ul>
-
         <nav class="navbar" data-navbar>
           <div class="navbar-top">
             <a href="#" class="logo">
-              <img src="./assets/images/logo-blue.svg" alt="Tourly logo" />
+              <img src="Admin/uploads/<?php echo $logo ?>" alt="Bharat Temple tourism" />
             </a>
 
             <button class="nav-close-btn" aria-label="Close Menu" data-nav-close-btn>
               <ion-icon name="close-outline"></ion-icon>
             </button>
           </div>
-
           <ul class="navbar-list">
             <li>
               <a href="#home" class="navbar-link" data-nav-link>home</a>
             </li>
-
-            <li>
-              <a href="#" class="navbar-link" data-nav-link>about us</a>
-            </li>
-
             <li>
               <a href="#destination" class="navbar-link" data-nav-link>destination</a>
             </li>
@@ -123,9 +123,10 @@ require_once "Admin/config.php";
               <a href="#contact" class="navbar-link" data-nav-link>contact us</a>
             </li>
           </ul>
+
         </nav>
 
-        <button class="btn btn-primary">Book Now</button>
+        <a href="User/" class="btn btn-primary">Login</a>
       </div>
     </div>
   </header>
@@ -150,51 +151,11 @@ require_once "Admin/config.php";
           </p>
 
           <div class="btn-group">
-            <button class="btn btn-primary">Learn more</button>
 
             <button class="btn btn-secondary">Book now</button>
           </div>
         </div>
       </section>
-
-      <!-- 
-        - #TOUR SEARCH
-      -->
-
-      <section class="tour-search">
-        <div class="container">
-          <form action="" class="tour-search-form">
-            <div class="input-wrapper">
-              <label for="destination" class="input-label">Search Destination*</label>
-
-              <input type="text" name="destination" id="destination" required placeholder="Enter Destination" class="input-field" />
-            </div>
-
-            <div class="input-wrapper">
-              <label for="people" class="input-label">Pax Number*</label>
-
-              <input type="number" name="people" id="people" required placeholder="No.of People" class="input-field" />
-            </div>
-
-            <div class="input-wrapper">
-              <label for="checkin" class="input-label">Checkin Date**</label>
-
-              <input type="date" name="checkin" id="checkin" required class="input-field" />
-            </div>
-
-            <div class="input-wrapper">
-              <label for="checkout" class="input-label">Checkout Date*</label>
-
-              <input type="date" name="checkout" id="checkout" required class="input-field" />
-            </div>
-
-            <button type="submit" class="btn btn-secondary">
-              Inquire now
-            </button>
-          </form>
-        </div>
-      </section>
-
       <!-- 
         - #POPULAR
       -->
@@ -268,7 +229,7 @@ require_once "Admin/config.php";
 
       <section class="package" id="package">
         <div class="container">
-          <p class="section-subtitle">Popular Packeges</p>
+          <p class="section-subtitle">Popular Packages</p>
 
           <h2 class="h2 section-title">Checkout Our Packages</h2>
 
@@ -337,10 +298,21 @@ require_once "Admin/config.php";
                       </div>
                     </div>
                     <p class="price">
-                      $<?= $data['price'] ?>
+                      ₹<?= $data['price'] ?>
                       <span>/ per person</span>
                     </p>
-                    <button class="btn btn-secondary">Book Now</button>
+                    <?php
+                    if ($isLoggedIn) {
+                    ?>
+
+                      <button class="btn btn-secondary" onclick="window.location.href='user/dashboard/book-a-tour.php?tourId=<?= $data['tourId'] ?>'">Book Now</button>
+                    <?php
+                    } else {
+                    ?>
+                      <button class="btn btn-secondary" onclick="window.location.href='user/login.php'">Book Now</button>
+                    <?php
+                    }
+                    ?>
                   </div>
                 </div>
               </li>
@@ -359,10 +331,10 @@ require_once "Admin/config.php";
         <div class="container">
           <p class="section-subtitle">Photo Gallery</p>
 
-          <h2 class="h2 section-title">Photo's From Travellers</h2>
+          <h2 class="h2 section-title">Photo's From Travelers</h2>
 
           <p class="section-text">
-            Traveler’s photos are more than just images; they are vibrant
+            Traveler's photos are more than just images; they are vibrant
             snapshots that capture the essence of a moment, the soul of a
             place, and the spirit of its people. Each picture tells a story,
             offering a glimpse into the captivating beauty and diversity our
@@ -374,7 +346,7 @@ require_once "Admin/config.php";
           <ul class="gallery-list">
             <?php
             // fetch images from database
-            $sql = "SELECT * FROM gallery_images";
+            $sql = "SELECT * FROM gallery_images order by id desc limit 0,5";
             // using pdo
             $result = $conn->prepare($sql);
             $result->execute();
@@ -384,11 +356,24 @@ require_once "Admin/config.php";
               <img
                 src="Admin/uploads/' . $row["file_name"] . '"
                 alt="Gallery image"
+                loading="lazy"
               />
-            </figure></li>';
+              <figcaption class="gallery-item-title">' . $row["review"] . '</figcaption>
+              <div class="card-rating">
+              <ion-icon name="star"></ion-icon>
+              <ion-icon name="star"></ion-icon>
+              <ion-icon name="star"></ion-icon>
+              <ion-icon name="star"></ion-icon>
+              <ion-icon name="star"></ion-icon>
+            </div>
+            </figure>
+           
+            </li>';
             }
             ?>
           </ul>
+          <!-- // load more button -->
+          <button class="btn btn-primary" onclick="window.location.href='gallery.php'">Load More</button>
         </div>
       </section>
 
@@ -402,7 +387,7 @@ require_once "Admin/config.php";
             <p class="section-subtitle">Call To Action</p>
 
             <h2 class="h2 section-title">
-              Ready For Unforgatable Travel. Remember Us!
+              Ready For Unforgettable Travel. Remember Us!
             </h2>
 
             <p class="section-text">
@@ -431,7 +416,7 @@ require_once "Admin/config.php";
       <div class="container">
         <div class="footer-brand">
           <a href="#" class="logo">
-            <img src="./assets/images/logo.svg" alt="Tourly logo" />
+            <img src="Admin/uploads/<?= $logo ?>" alt="Bharat Temple tourism" />
           </a>
 
           <p class="footer-text">
@@ -445,7 +430,7 @@ require_once "Admin/config.php";
         </div>
 
         <div class="footer-contact">
-          <h4 class="contact-title">Contact Us</h4>
+          <p class="contact-title">Contact Us</p>
 
           <p class="contact-text">Feel free to contact and reach us !!</p>
 
@@ -453,19 +438,19 @@ require_once "Admin/config.php";
             <li class="contact-item">
               <ion-icon name="call-outline"></ion-icon>
 
-              <a href="tel:+01123456790" class="contact-link">+01 (123) 4567 90</a>
+              <a href="tel:<?= $phone ?>" class="contact-link"><?= $phone ?></a>
             </li>
 
             <li class="contact-item">
               <ion-icon name="mail-outline"></ion-icon>
 
-              <a href="mailto:info.tourly.com" class="contact-link">info.tourly.com</a>
+              <a href="mailto:<?= $email ?>" class="contact-link"><?= $email ?></a>
             </li>
 
             <li class="contact-item">
               <ion-icon name="location-outline"></ion-icon>
 
-              <address>3146 Koontz, California</address>
+              <address><?= $address ?></address>
             </li>
           </ul>
         </div>
@@ -475,7 +460,7 @@ require_once "Admin/config.php";
             Subscribe our newsletter for more update & news !!
           </p>
 
-          <form action="" class="form-wrapper">
+          <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" class="form-wrapper">
             <input type="email" name="email" class="input-field" placeholder="Enter Your Email" required />
 
             <button type="submit" class="btn btn-secondary">Subscribe</button>
@@ -492,15 +477,15 @@ require_once "Admin/config.php";
 
         <ul class="footer-bottom-list">
           <li>
-            <a href="#" class="footer-bottom-link">Privacy Policy</a>
+            <a href="./privacy-policy.php" class="footer-bottom-link">Privacy Policy</a>
           </li>
 
           <li>
-            <a href="#" class="footer-bottom-link">Term & Condition</a>
+            <a href="./term.php" class="footer-bottom-link">Term & Condition</a>
           </li>
 
           <li>
-            <a href="#" class="footer-bottom-link">Refund Policy</a>
+            <a href="./refund-policy.php" class="footer-bottom-link">Refund Policy</a>
           </li>
         </ul>
       </div>
@@ -525,6 +510,39 @@ require_once "Admin/config.php";
   -->
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script>
+    $(document).ready(function() {
+      $('a[href^="#"]').on('click', function(event) {
+        var target = $(this.getAttribute('href'));
+        if (target.length) {
+          event.preventDefault();
+          $('html, body').animate({
+            scrollTop: target.offset().top
+          }, 1000);
+        }
+      })
+    })
+    // send newsletter subscription form to newsletter.php using ajax
+    $(document).ready(function() {
+      $('.form-wrapper').on('submit', function(event) {
+        event.preventDefault();
+        $.ajax({
+          url: 'newsletter.php',
+          type: 'POST',
+          data: $(this).serialize(),
+          success: function(data) {
+            alert(data);
+            // reset form 
+            $('.form-wrapper')[0].reset();
+          },
+          error: function(err) {
+            alert('Something went wrong!', err);
+          }
+        })
+      })
+    })
+  </script>
 </body>
 
 </html>
