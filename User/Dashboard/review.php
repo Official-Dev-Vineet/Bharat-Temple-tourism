@@ -26,8 +26,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["gallery"])) {
         // Upload file to the server
         if (move_uploaded_file($_FILES["gallery"]["tmp_name"], $targetFilePath)) {
             // Insert image details into database using prepared statements
-            $sql = "INSERT INTO gallery_images (file_name, file_path,email,review) VALUES (:file_name, :file_path,:email,:review)";
+            $sql = "INSERT INTO gallery_images (title,name,file_name, file_path,email,review) VALUES (:title,:name,:file_name, :file_path,:email,:review)";
             $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':title', $_POST["tourId"], PDO::PARAM_STR);
+            $stmt->bindParam(':name', $_SESSION["name"], PDO::PARAM_STR);
             $stmt->bindParam(':file_name', $fileName, PDO::PARAM_STR);
             $stmt->bindParam(':file_path', $targetFilePath, PDO::PARAM_STR);
             $stmt->bindParam(':email', $_SESSION['email'], PDO::PARAM_STR);
@@ -65,15 +67,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["gallery"])) {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <meta name="description" content="Explore the rich cultural heritage of Bharat through its ancient temples. Plan your trip to experience spirituality and architectural marvels.">
     <meta name="keywords" content="Bharat, temple, tourism, cultural heritage, spirituality, architecture">
+    <link rel="icon" href="../../Admin/uploads/<?= $logo ?>">
     <meta name="author" content="Official Dev Vineet">
     <meta property="og:title" content="Bharat Temple Tourism">
     <meta property="og:description" content="Explore the rich cultural heritage of Bharat through its ancient temples. Plan your trip to experience spirituality and architectural marvels.">
-    <meta property="og:image" content="../../Admin/uploads/<?= $logo ?>">
+    <meta property="og:image" content="../../Admin/<?= $logo ?>">
     <meta property="og:url" content="https://example.com/bharat-temple-tourism">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Bharat Temple Tourism">
     <meta name="twitter:description" content="Explore the rich cultural heritage of Bharat through its ancient temples. Plan your trip to experience spirituality and architectural marvels.">
-    <meta name="twitter:image" content="../../Admin/uploads/<?= $logo ?>">
+    <meta name="twitter:image" content="../../Admin/<?= $logo ?>">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -154,6 +157,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["gallery"])) {
         <div class="container bg-dark text-light">
             <h2 class="mb-4 text-center">Add your Trip experience to our website gallery.</h2>
             <form id="uploadForm" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
+                <select class="form-control"  name="tourId">
+                    <?php 
+                        require_once "../../Admin/config.php";
+                        // fetch bookingtour data where email
+                        $stmt = $conn->prepare("SELECT * FROM bookingtour WHERE emailId = :email");
+                        $stmt->bindParam(':email', $_SESSION['email'], PDO::PARAM_STR);
+                        $stmt->execute();
+                        $data = $stmt->fetchAll();
+                        foreach ($data as $row) {
+                            // fetch title from tourpackages where tourId
+                            $stmt = $conn->prepare("SELECT * FROM tourpackages WHERE tourId = :tourId");
+                            $stmt->bindParam(':tourId', $row['tourId'], PDO::PARAM_STR);
+                            $stmt->execute();
+                            $tour = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                            echo "<option value='" . $tour['tourId'] . "'>" . $tour['title'] . "</option>";
+                        }
+                    ?>
+                </select>
                 <div class="form-group">
                     <label for="gallery">Select Images:</label>
                     <input type="file" class="form-control-file" id="gallery" name="gallery" accept="image/*" required />
@@ -166,6 +188,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["gallery"])) {
 
                 <button type="submit" class="btn btn-primary">Upload Gallery</button>
             </form>
+        </div>
+        <div class="container text-light">
+            <p class="mt-3">Previous Reviews:</p>
+            <div class="gallery-container" id="uploadedImages">
+                <?php
+                // connect to database
+                require_once "../../Admin/config.php";
+                $stmt = $conn->prepare("SELECT * FROM gallery_images where email=:email ORDER BY id DESC");
+                $stmt->bindParam(':email', $_SESSION['email'], PDO::PARAM_STR);
+                $stmt->execute();
+                // Fetch results and fetch associative array
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    // set alt text as file name
+                    echo '<div class="gallery-item" id="gallery-item-' . $row['id'] . '"> <img src="' . $row['file_path'] . '" alt="' . $row['file_name'] . '"  class="img-fluid" />   <button onclick="deleteImage(' . $row['id'] . ')" class="btn btn-danger mt-2">Delete</button></div>
+        <h4>Review</h4>
+        <p> ' . htmlspecialchars($row['review'], ENT_QUOTES, 'UTF-8') . ' </p>';
+                }
+                if ($stmt->rowCount() == 0) {
+                    echo "<p class='text-center'>No reviews yet.</p>";
+                }
+                $conn = null;
+                ?>
+            </div>
         </div>
         <!-- Fetch images from server -->
         <script>
@@ -180,14 +225,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["gallery"])) {
                         processData: false,
                         contentType: false,
                         success: function(response) {
-                           if(response == "success"){
-                            alert("File uploaded successfully!");
-                            $("#uploadForm")[0].reset(); // Reset the form
-                            // reload window after successful upload
-                            location.reload();
-                           }else{
-                            alert(response);
-                           }
+                            if (response == "success") {
+                                alert("File uploaded successfully!");
+                                $("#uploadForm")[0].reset(); // Reset the form
+                                // reload window after successful upload
+                                location.reload();
+                            } else {
+                                alert(response);
+                            }
                         },
                         error: function() {
                             alert("Error uploading file!");
@@ -203,6 +248,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["gallery"])) {
                     $('#charCount').text(remaining);
                 });
             });
+
+            function deleteImage(id) {
+                if (confirm("Are you sure you want to delete this review?")) {
+                    $.ajax({
+                        url: "../../Admin/delete_image.php",
+                        type: "POST",
+                        data: {
+                            id: id
+                        }
+                    }).done(function(response) {
+                        if (response == "success") {
+                            $("#gallery-item-" + id).remove();
+                            $("#gallery-item-" + id).nextAll().remove();
+                        }
+                    })
+
+                }
+            }
         </script>
 </body>
 

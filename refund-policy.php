@@ -158,7 +158,7 @@ $logo = $data['logo'];
 
                 </nav>
 
-                <a href="#package" class="btn btn-primary"> Book Now</a>
+                <a href="./index.php#package" class="btn btn-primary"> Book Now</a>
             </div>
         </div>
     </header>
@@ -166,20 +166,7 @@ $logo = $data['logo'];
     <main>
         <section class="hero" id="home">
             <div class="container">
-                <h2 class="h1 hero-title">Journey to explore Indian History</h2>
-
-                <p class="hero-text">
-                    Welcome to Bharat Temple Tour, your spiritual gateway to exploring
-                    the timeless beauty and divine serenity of India's most revered
-                    sacred sites. Embark on a journey of faith, history, and wonder
-                    with us, as we traverse the length and breadth of this ancient
-                    land, visiting its magnificent temples that stand as beacons of
-                    spiritual energy and architectural marvel.
-                </p>
-
-                <div class="btn-group">
-                    <button class="btn btn-secondary" onclick="window.location.href='./index.php#package'">Book now</button>
-                </div>
+                <h2 class="h1 hero-title">Our Commitment to Fairness and Customer Satisfaction</h2>
             </div>
         </section>
         <section class="container refund-policy">

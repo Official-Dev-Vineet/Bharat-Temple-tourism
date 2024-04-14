@@ -7,6 +7,12 @@ if (!isset($_SESSION['user_id'])) {
 }
 // fetch price from database
 require_once "../../Admin/config.php";
+
+$stmt = $conn->prepare("SELECT * FROM admin");
+$stmt->execute();
+$data = $stmt->fetch(PDO::FETCH_ASSOC);
+$logo = $data['logo'];
+
 // find package details from database table tourpackages 
 $stmt = $conn->prepare("SELECT * FROM tourpackages WHERE tourId = :id");
 $stmt->bindParam(':id', $tourId);
@@ -24,18 +30,20 @@ if ($stmt->rowCount() > 0) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tour Booking Form</title>
-  <meta name="description" content="Explore the rich cultural heritage of Bharat through its ancient temples. Plan your trip to experience spirituality and architectural marvels.">
+  <title>Tour Booking Form : <?= $tourDetails['title'] ?></title>
+  <meta name="description" content="<?= $result['description'] ?>">
   <meta name="keywords" content="Bharat, temple, tourism, cultural heritage, spirituality, architecture">
   <meta name="author" content="Official Dev Vineet">
-  <meta property="og:title" content="Bharat Temple Tourism">
-  <meta property="og:description" content="Explore the rich cultural heritage of Bharat through its ancient temples. Plan your trip to experience spirituality and architectural marvels.">
-  <meta property="og:image" content="Admin/uploads/<?= $logo ?>">
-  <meta property="og:url" content="https://example.com/bharat-temple-tourism">
+  <meta property="og:title" content="<?= $tourDetails['title'] ?>">
+  <meta property="og:description" content="<?= $tourDetails['description'] ?>">
+  <meta property="og:image" content="Admin/<?= $tourDetails['image'] ?>">
+  <meta property="og:url" content="https://<?= htmlspecialchars($_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']) ?>">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Bharat Temple Tourism">
-  <meta name="twitter:description" content="Explore the rich cultural heritage of Bharat through its ancient temples. Plan your trip to experience spirituality and architectural marvels.">
-  <meta name="twitter:image" content="Admin/uploads/<?= $logo ?>">
+  <meta name="twitter:title" content="<?= $tourDetails['title'] ?>">
+  <meta name="twitter:description" content="<?= $tourDetails['description'] ?>">
+  <meta name="twitter:image" content="Admin/<?= $tourDetails['image'] ?>">
+  <title>Bharat Temple Tourism</title>
+  <link rel="icon" href="Admin/uploads/<?= $logo ?>" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
   <style>
     body {
@@ -104,8 +112,11 @@ if ($stmt->rowCount() > 0) {
       </ul>
     </div>
   </nav>
-  <div class="container">
-    <h2 class="mt-5 mb-4">Tour Booking Form</h2>
+  <div class="container text-light">
+    <h2 class="mt-5 mb-4">Tour Booking Form : <?= $tourDetails['title'] ?></h2>
+    <p>
+      <strong>Price:</strong> <?= $price ?> Rs./ per person
+    </p>
     <form action="payment.php" method="POST">
       <div class="form-group">
         <label for="tourId">Tour ID:</label>
@@ -118,14 +129,6 @@ if ($stmt->rowCount() > 0) {
       <div class="form-group">
         <label for="startDate">Tour start Date:</label>
         <input type="date" class="form-control" id="startDate" name="startDate" required />
-      </div>
-      <div class="form-group">
-        <label for="day">Day:</label>
-        <input type="number" class="form-control" id="day" name="day" min="1" required />
-      </div>
-      <div class="form-group">
-        <label for="night">Night:</label>
-        <input type="number" class="form-control" id="night" readonly name="night" required />
       </div>
       <div class="form-group">
         <label for="person">Person:</label>
@@ -143,26 +146,22 @@ if ($stmt->rowCount() > 0) {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
-    // validation for input
+    var currentDate = new Date();
+    // Calculate the date three days later
+    var threeDaysLater = new Date(currentDate);
+    threeDaysLater.setDate(currentDate.getDate() + 3);
+    // Set the minimum date for the input element with id 'startDate'
+    document.getElementById('startDate').min = threeDaysLater.toISOString().split('T')[0];
     $(document).ready(function() {
-      $('#day').on('input', function() {
-        // prevent input if value less than 1
-        if ($(this).val() < 1) {
-          $(this).val(1);
-        }
-        var day = parseInt($(this).val());
-        var night = day - 1;
-        var person = parseInt($('#person').val());
-        if (day < 1) {
-          $('#night').val(1);
-        } else {
-          $('#night').val(night);
-        }
-      })
-    })
-    // validation for person and calculate amount 
-
-    document.getElementById('startDate').min = new Date().toISOString().split('T')[0];
+      // Event listener for input changes on the person field
+      $('#person').on('input', function() {
+        var numberOfPersons = parseInt($(this).val()); // Get the number of persons
+        // Calculate price based on the number of persons (assuming $10 per person)
+        var price = numberOfPersons * "<?= $tourDetails['price'] ?>"; // Adjust the price calculation based on your actual pricing logic
+        // Update the price input field with the calculated price
+        $('#amount').val(price); // Format price with two decimal places and prepend with '$'
+      });
+    });
   </script>
 </body>
 

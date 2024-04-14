@@ -158,7 +158,7 @@ $logo = $data['logo'];
 
                 </nav>
 
-                <a href="#package" class="btn btn-primary"> Book Now</a>
+                <a href="./index.php#package" class="btn btn-primary"> Book Now</a>
             </div>
         </div>
     </header>
@@ -166,38 +166,25 @@ $logo = $data['logo'];
     <main>
         <section class="hero" id="home">
             <div class="container">
-                <h2 class="h1 hero-title">Journey to explore Indian History</h2>
-
-                <p class="hero-text">
-                    Welcome to Bharat Temple Tour, your spiritual gateway to exploring
-                    the timeless beauty and divine serenity of India's most revered
-                    sacred sites. Embark on a journey of faith, history, and wonder
-                    with us, as we traverse the length and breadth of this ancient
-                    land, visiting its magnificent temples that stand as beacons of
-                    spiritual energy and architectural marvel.
-                </p>
-
-                <div class="btn-group">
-                    <button class="btn btn-secondary" onclick="window.location.href='./index.php#package'">Book now</button>
-                </div>
+                <h2 class="h1 hero-title">Terms of Use: Guidelines for Using Our Website</h2>
             </div>
         </section>
         <section class="container terms-content">
-        <h1 class="mb-4">Terms and Conditions</h1>
-        <ol>
-            <li><strong>Acceptance of Terms:</strong> By accessing or using this website, you agree to be bound by these terms and conditions and our privacy policy. If you do not agree with any part of these terms, please do not use our website.</li>
-            <li><strong>Use of Website:</strong> This website is intended for personal and non-commercial use. You may not use this website for any illegal or unauthorized purpose.</li>
-            <li><strong>Accuracy of Information:</strong> We strive to provide accurate and up-to-date information on our website. However, we do not guarantee the accuracy, completeness, or reliability of any information, content, or materials provided.</li>
-            <li><strong>Booking and Payments:</strong> When booking tours or making payments through our website, you agree to provide accurate and complete information. Payments are subject to the terms and conditions of the payment gateway provider.</li>
-            <li><strong>Cancellation and Refunds:</strong> Please refer to our refund policy for information on cancellations and refunds.</li>
-            <li><strong>Intellectual Property:</strong> All content, images, logos, and trademarks on this website are the property of Bharat Temple Tourism or its licensors. You may not use, reproduce, or distribute any content from this website without prior written permission.</li>
-            <li><strong>Links to Third-Party Sites:</strong> This website may contain links to third-party websites for your convenience. We do not endorse or control these websites and are not responsible for their content or practices.</li>
-            <li><strong>Limitation of Liability:</strong> Bharat Temple Tourism and its affiliates shall not be liable for any direct, indirect, incidental, consequential, or punitive damages arising from your use of this website.</li>
-            <li><strong>Changes to Terms:</strong> We reserve the right to update or modify these terms and conditions at any time without prior notice. It is your responsibility to check for any changes periodically.</li>
-            <li><strong>Governing Law:</strong> These terms and conditions are governed by the laws of [Your Country/State], and any disputes shall be resolved in the courts of [Your City/Region].</li>
-        </ol>
-        <p>If you have any questions or concerns about these terms and conditions, please contact us at <a href="mailto:contact@example.com">contact@example.com</a>.</p>
-    </section>
+            <h1 class="mb-4">Terms and Conditions</h1>
+            <ol>
+                <li><strong>Acceptance of Terms:</strong> By accessing or using this website, you agree to be bound by these terms and conditions and our privacy policy. If you do not agree with any part of these terms, please do not use our website.</li>
+                <li><strong>Use of Website:</strong> This website is intended for personal and non-commercial use. You may not use this website for any illegal or unauthorized purpose.</li>
+                <li><strong>Accuracy of Information:</strong> We strive to provide accurate and up-to-date information on our website. However, we do not guarantee the accuracy, completeness, or reliability of any information, content, or materials provided.</li>
+                <li><strong>Booking and Payments:</strong> When booking tours or making payments through our website, you agree to provide accurate and complete information. Payments are subject to the terms and conditions of the payment gateway provider.</li>
+                <li><strong>Cancellation and Refunds:</strong> Please refer to our refund policy for information on cancellations and refunds.</li>
+                <li><strong>Intellectual Property:</strong> All content, images, logos, and trademarks on this website are the property of Bharat Temple Tourism or its licensors. You may not use, reproduce, or distribute any content from this website without prior written permission.</li>
+                <li><strong>Links to Third-Party Sites:</strong> This website may contain links to third-party websites for your convenience. We do not endorse or control these websites and are not responsible for their content or practices.</li>
+                <li><strong>Limitation of Liability:</strong> Bharat Temple Tourism and its affiliates shall not be liable for any direct, indirect, incidental, consequential, or punitive damages arising from your use of this website.</li>
+                <li><strong>Changes to Terms:</strong> We reserve the right to update or modify these terms and conditions at any time without prior notice. It is your responsibility to check for any changes periodically.</li>
+                <li><strong>Governing Law:</strong> These terms and conditions are governed by the laws of [Your Country/State], and any disputes shall be resolved in the courts of [Your City/Region].</li>
+            </ol>
+            <p>If you have any questions or concerns about these terms and conditions, please contact us at <a href="mailto:contact@example.com">contact@example.com</a>.</p>
+        </section>
         <section class="cta" id="contact">
             <div class="container">
                 <div class="cta-content">

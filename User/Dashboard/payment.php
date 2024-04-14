@@ -10,21 +10,28 @@ session_start();
 // check request method
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $tourId = $_POST['tourId'];
+    // fetch tour details from tourpackages
+    $sql = "SELECT * FROM tourpackages WHERE tourId = :tourId";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':tourId', $tourId, PDO::PARAM_STR);
+    $stmt->execute();
+    $tour = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->closeCursor();
+    $stmt= null;
     $email = $_SESSION['email'];
     $contactNumber = $_POST['contactNumber'];
-    $day = $_POST['day'];
-    $night = $_POST['night'];
+    $day = $tour['day'];
     $person = $_POST['person'];
     $userEmailId = $_SESSION['email'];
     $bookingDate = $_POST['startDate'];
     $currentDate = date("Y-m-d");
-    $currentTime= date("H:i:s");
-    $amount = $day * $person * $_POST['amount'];
+    $currentTime = date("H:i:s");
+    $amount = $person * $tour['price'];
     $status = 'Pending';
     $transactionId = 'TRN' . rand(2999, 9999) . time();
     $pnr = 'BHARAT' . rand(10000000, 99999999);
     // insert booking data to bookingtour table
-    $sql = "INSERT INTO bookingtour (tourId,amount, person, emailId, contactNumber, day, night, bookingDate, status,pnr,transId,currentTime) VALUES (:tourId, :amount,:person, :email, :contactNumber, :day, :night, :bookingDate, :status,:pnr,:transId,:currentTime)";
+    $sql = "INSERT INTO bookingtour (tourId,amount, person, emailId, contactNumber, day,bookingDate, status,pnr,transId,currentTime) VALUES (:tourId, :amount,:person, :email, :contactNumber, :day, :bookingDate, :status,:pnr,:transId,:currentTime)";
 
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':tourId', $tourId, PDO::PARAM_STR);
@@ -33,7 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bindParam(':amount', $amount, PDO::PARAM_STR);
     $stmt->bindParam(':contactNumber', $contactNumber, PDO::PARAM_STR);
     $stmt->bindParam(':day', $day, PDO::PARAM_STR);
-    $stmt->bindParam(':night', $night, PDO::PARAM_STR);
     $stmt->bindParam(':bookingDate', $bookingDate, PDO::PARAM_STR);
     $stmt->bindParam(':status', $status, PDO::PARAM_STR);
     $stmt->bindParam(':pnr', $pnr, PDO::PARAM_STR);
@@ -48,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $eventPayload = [
                 'merchantId' => 'PGTESTPAYUAT',
                 'merchantTransactionId' => $transactionId,
-                'merchantUserId' => 'MUID123',
+                'merchantUserId' => 'BHARATTEMPLETOURISM',
                 'amount' => $amount * 100,
                 'redirectUrl' => 'http://localhost:8080/Bharat-temple-tourism/User/Dashboard/paymentStatus.php?transactionId=' . $transactionId,
                 'redirectMode' => 'POST',
@@ -92,10 +98,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     'header' => implode("\r\n", $headers),
                 ],
             ];
-
             // Create a stream context
             $context = stream_context_create($options);
-
             // Make the request to PhonePe API
             $response = file_get_contents($phonePayUrl, false, $context);
 
@@ -107,7 +111,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Redirect the user to PhonePe for payment
             header("Location: $redirectUrl");
-            exit();
         }
     }
 } else {

@@ -166,19 +166,14 @@
         <main>
             <section class="hero" id="home">
                 <div class="container">
-                    <h2 class="h1 hero-title">Journey to explore Indian History</h2>
+                    <h2 class="h1 hero-title">Bharat Temple divine journey</h2>
 
                     <p class="hero-text">
-                        Welcome to Bharat Temple Tour, your spiritual gateway to exploring
-                        the timeless beauty and divine serenity of India's most revered
-                        sacred sites. Embark on a journey of faith, history, and wonder
-                        with us, as we traverse the length and breadth of this ancient
-                        land, visiting its magnificent temples that stand as beacons of
-                        spiritual energy and architectural marvel.
+                    Welcome to Bharat Temple's online gallery, where every scroll unveils a timeless journey of spirituality, artistry, and cultural heritage. Immerse yourself in the divine aura of our sacred temple, where history and devotion intertwine to create a truly unforgettable experience.
                     </p>
 
                     <div class="btn-group">
-                        <button class="btn btn-secondary" onclick="window.location.href='./index.php#package'">Book now</button>
+                        <button class="btn btn-secondary" onclick="window.location.href='#gallery'">View now</button>
                     </div>
                 </div>
             </section>

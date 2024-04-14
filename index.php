@@ -33,7 +33,7 @@ $logo = $data['logo'];
   <meta property="og:title" content="Bharat Temple Tourism">
   <meta property="og:description" content="Explore the rich cultural heritage of Bharat through its ancient temples. Plan your trip to experience spirituality and architectural marvels.">
   <meta property="og:image" content="Admin/uploads/<?= $logo ?>">
-  <meta property="og:url" content="https://example.com/bharat-temple-tourism">
+  <meta property="og:url" content="">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Bharat Temple Tourism">
   <meta name="twitter:description" content="Explore the rich cultural heritage of Bharat through its ancient temples. Plan your trip to experience spirituality and architectural marvels.">
@@ -44,6 +44,58 @@ $logo = $data['logo'];
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Bootstrap CSS -->
+  <style>
+    .container {
+      max-width: 1200px;
+      padding: 0 20px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      width: 100%;
+      max-width: 500px;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 5px 0 0 5px;
+      font-size: 16px;
+      color: #fff;
+    }
+
+    .search-button {
+      padding: 10px 15px;
+      background-color: #007bff;
+
+      color: #fff;
+      border: 2px solid #007bff;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .search-box {
+        flex-direction: column;
+      }
+
+      .search-input {
+        border-radius: 5px;
+        margin-bottom: 10px;
+      }
+
+      .search-button {
+        border-radius: 5px;
+      }
+    }
+  </style>
+  <!-- Font Awesome CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
 
 <body id="top">
@@ -149,11 +201,61 @@ $logo = $data['logo'];
             land, visiting its magnificent temples that stand as beacons of
             spiritual energy and architectural marvel.
           </p>
-
+          <div class="container">
+            <div class="search-box">
+              <input type="text" class="search-input" id="searchTerm" placeholder="Enter your search term...">
+              <button class="search-button" id="searchButton">Search</button>
+            </div>
+          </div>F
           <div class="btn-group">
 
-            <button class="btn btn-secondary">Book now</button>
+            <button class="btn btn-secondary" onclick="window.location.href='#package'">Book now</button>
           </div>
+        </div>
+      </section>
+
+      <!-- 
+        - #PACKAGE
+      -->
+
+      <section class="package" id="package">
+        <div class="container">
+          <p class="section-subtitle">Popular Packages</p>
+
+          <h2 class="h2 section-title">Checkout Our Packages</h2>
+
+          <p class="section-text">
+            Embark on a journey of discovery with our meticulously crafted
+            tour packages, designed to cater to every type of traveler.
+            Whether you're seeking adventure, relaxation, cultural immersion,
+            or all of the above, our tours promise experiences that are
+            nothing short of extraordinary.
+          </p>
+
+          <ul class="packages" style="margin-top:3rem">
+            <?php
+            // fetch data from tourpackages 
+            $sql = "SELECT * FROM `tourpackages` order by id desc";
+            $result = $conn->prepare($sql);
+            $result->execute();
+            while ($data = $result->fetch(PDO::FETCH_ASSOC)) {
+            ?>
+              <li class="package" title="<?= $data['title'] ?>">
+                <figure>
+                  <img src="Admin/<?= $data['image'] ?>" alt="<?= $data['title'] ?>" loading="lazy" />
+                </figure>
+                <h3 class="title">
+                  <?= $data['title'] ?>
+                </h3>
+                <div class="btns">
+                  <button class="btn btn-primary" onclick="window.location.href='package.php?id=<?= $data['tourId'] ?>'" title="view details">View</button>
+                  <button class="btn btn-primary" title="share" onclick="share(window.location.href.replace('/index.php', '').replace(/#/g,'') + '/package.php?id=<?= $data['tourId'] ?>')">Share</button>
+                </div>
+              </li>
+            <?php
+            }
+            ?>
+          </ul>
         </div>
       </section>
       <!-- 
@@ -222,107 +324,6 @@ $logo = $data['logo'];
           </ul>
         </div>
       </section>
-
-      <!-- 
-        - #PACKAGE
-      -->
-
-      <section class="package" id="package">
-        <div class="container">
-          <p class="section-subtitle">Popular Packages</p>
-
-          <h2 class="h2 section-title">Checkout Our Packages</h2>
-
-          <p class="section-text">
-            Embark on a journey of discovery with our meticulously crafted
-            tour packages, designed to cater to every type of traveler.
-            Whether you're seeking adventure, relaxation, cultural immersion,
-            or all of the above, our tours promise experiences that are
-            nothing short of extraordinary.
-          </p>
-
-          <ul class="package-list">
-            <?php
-            // fetch data from tourpackages 
-            $sql = "SELECT * FROM `tourpackages` order by id desc";
-            $result = $conn->prepare($sql);
-            $result->execute();
-            while ($data = $result->fetch(PDO::FETCH_ASSOC)) {
-            ?>
-              <li>
-                <div class="package-card">
-                  <figure class="card-banner">
-                    <img src="Admin/uploads/<?= $data['image'] ?>" alt="<?= $data['title'] ?>" loading="lazy" />
-                  </figure>
-
-                  <div class="card-content">
-                    <h3 class="h3 card-title">
-                      <?= $data['title'] ?>
-                    </h3>
-
-                    <p class="card-text">
-                      <?= $data['description'] ?>:
-                    </p>
-
-                    <ul class="card-meta-list">
-                      <li class="card-meta-item">
-                        <div class="meta-box">
-                          <ion-icon name="time"></ion-icon>
-                          <p class="text"><?= $data['day'] ?>D/<?= $data['night'] ?>N</p>
-                        </div>
-                      </li>
-
-                      <li class="card-meta-item">
-                        <div class="meta-box">
-                          <ion-icon name="people"></ion-icon>
-                          <p class="text">pax: <?= $data['pax'] ?></p>
-                        </div>
-                      </li>
-                      <li class="card-meta-item">
-                        <div class="meta-box">
-                          <ion-icon name="location"></ion-icon>
-                          <p class="text"><?= $data['location'] ?></p>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                  <div class="card-price">
-                    <div class="wrapper">
-                      <p class="reviews">(<?= $data['reviewCount'] ?> reviews)</p>
-                      <div class="card-rating">
-                        <ion-icon name="star"></ion-icon>
-                        <ion-icon name="star"></ion-icon>
-                        <ion-icon name="star"></ion-icon>
-                        <ion-icon name="star"></ion-icon>
-                        <ion-icon name="star"></ion-icon>
-                      </div>
-                    </div>
-                    <p class="price">
-                      ₹<?= $data['price'] ?>
-                      <span>/ per person</span>
-                    </p>
-                    <?php
-                    if ($isLoggedIn) {
-                    ?>
-
-                      <button class="btn btn-secondary" onclick="window.location.href='user/dashboard/book-a-tour.php?tourId=<?= $data['tourId'] ?>'">Book Now</button>
-                    <?php
-                    } else {
-                    ?>
-                      <button class="btn btn-secondary" onclick="window.location.href='user/login.php'">Book Now</button>
-                    <?php
-                    }
-                    ?>
-                  </div>
-                </div>
-              </li>
-            <?php
-            }
-            ?>
-          </ul>
-        </div>
-      </section>
-
       <!-- 
         - #GALLERY
       -->
@@ -343,7 +344,7 @@ $logo = $data['logo'];
             lands and cultures right to our fingertips.
           </p>
 
-          <ul class="gallery-list">
+          <ul class="gallery-list" style="margin-top:3rem">
             <?php
             // fetch images from database
             $sql = "SELECT * FROM gallery_images order by id desc limit 0,5";
@@ -358,7 +359,7 @@ $logo = $data['logo'];
                 alt="Gallery image"
                 loading="lazy"
               />
-              <figcaption class="gallery-item-title">' . $row["review"] . '</figcaption>
+              <figcaption class="gallery-item-title">' . htmlspecialchars($row['review'], ENT_QUOTES, 'UTF-8') . '</figcaption>
               <div class="card-rating">
               <ion-icon name="star"></ion-icon>
               <ion-icon name="star"></ion-icon>
@@ -367,13 +368,12 @@ $logo = $data['logo'];
               <ion-icon name="star"></ion-icon>
             </div>
             </figure>
-           
             </li>';
             }
             ?>
           </ul>
           <!-- // load more button -->
-          <button class="btn btn-primary" onclick="window.location.href='gallery.php'">Load More</button>
+          <button class="btn btn-primary" style="margin-top: 1rem;" onclick="window.location.href='gallery.php'">Load More</button>
         </div>
       </section>
 
@@ -491,23 +491,10 @@ $logo = $data['logo'];
       </div>
     </div>
   </footer>
-
-  <!-- 
-    - #GO TO TOP
-  -->
-
   <a href="#top" class="go-top" data-go-top>
     <ion-icon name="chevron-up-outline"></ion-icon>
   </a>
-
-  <!-- 
-    - custom js link
-  -->
   <script src="./assets/js/script.js"></script>
-
-  <!-- 
-    - ionicon link
-  -->
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
@@ -542,6 +529,26 @@ $logo = $data['logo'];
         })
       })
     })
+
+    function share(link) {
+      navigator.share({
+        title: 'Bharat Temple Tourism',
+        text: 'Check out this website',
+        url: link,
+      }).then(() => {
+        console.log('Thanks for sharing!');
+      }).catch((error) => {
+        console.error('Error sharing:', error);
+      }).finally(() => {
+        console.log('Thanks for sharing!');
+      })
+    }
+    document.getElementById("searchButton").addEventListener("click", function() {
+      var searchTerm = document.getElementById("searchTerm").value.trim();
+      if (searchTerm !== "") {
+        window.location.href = "searchPage.php?search=" + encodeURIComponent(searchTerm);
+      }
+    });
   </script>
 </body>
 

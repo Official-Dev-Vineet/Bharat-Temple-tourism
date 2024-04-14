@@ -1,18 +1,15 @@
 <?php
 // Define PhonePe gateway information
 session_start();
-$msg = '';
 $gateway = (object) [
     'token' => 'PGTESTPAYUAT',
     'secret_key' => '099eb0cd-02cf-4e2a-8aca-3e6c6aff0399',
 ];
-
 // Extract transaction ID from POST data
 $orderId = $_POST['transactionId'];
 
 // Construct X-VERIFY header for status check
 $encodeIn265 = hash('sha256', '/pg/v1/status/' . $gateway->token . '/' . $orderId . $gateway->secret_key) . '###1';
-
 // Set headers for the status check request
 $headers = [
     'Content-Type: application/json',
@@ -20,7 +17,6 @@ $headers = [
     'X-VERIFY: ' . $encodeIn265,
     'Accept: application/json',
 ];
-
 // Define PhonePe status check URL
 $phonePeStatusUrl = 'https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/' . $gateway->token . '/' . $orderId; // For Development
 // $phonePeStatusUrl = 'https://api.phonepe.com/apis/hermes/pg/v1/status/' . $gateway->token . '/' . $orderId; // For Production
@@ -60,10 +56,11 @@ if ($api_response->code == "PAYMENT_SUCCESS") {
         $result->closeCursor();
         $result = null;
         // fetch name from user_register table
-        $sql = "SELECT Name  FROM user_register WHERE Email = '$_SESSION[email]'";
+        $sql = "SELECT Name  FROM user_register WHERE email = '$_SESSION[email]'";
         $result = $conn->prepare($sql);
         $result->execute();
         $name = $result->fetch();
+        $result->closeCursor();
         $result = null;
         // send mail to user
         $to = $row['emailId'];
@@ -97,7 +94,7 @@ if ($api_response->code == "PAYMENT_SUCCESS") {
                     </ul>
                     <p style="font-size: 16px;">Please keep this transaction ID for future reference.</p>
                     <p style="font-size: 16px;">We appreciate your booking and look forward to seeing you soon.</p>
-                    <img src="http://localhost:8080/Bharat-Temple-Tourism/Admin/uploads/' . $tourDetails['image'] . '" alt="Tour Image" style="max-width: 100%; height: auto; margin-top: 20px;">
+                    <img src="http://localhost:8080/Bharat-Temple-Tourism/Admin/' . $tourDetails['image'] . '" alt="Tour Image" style="max-width: 100%; height: auto; margin-top: 20px;">
                     <p style="font-size: 16px;">Best regards,</p>
                     <p style="font-size: 16px;">Team Bharat Temple Tourism</p>
                     <p style="font-size: 16px;">www.bharat-temple-tourism.com</p>
@@ -122,7 +119,6 @@ if ($api_response->code == "PAYMENT_SUCCESS") {
         }
     } else {
         echo "Payment Details sent to your mail id ";
-        // clear post data
         echo '<a href="http://localhost:8080/Bharat-Temple-Tourism/User/Dashboard/myBooking.php" class="btn btn-primary">Find Tour Details</a>';
 
         exit;
@@ -146,7 +142,7 @@ if ($api_response->code == "PAYMENT_SUCCESS") {
     <?php
     if (isset($body)) {
         echo $body;
-        echo '<button id="generate-pdf" style="background-color: #007bff; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; margin-top: 10px; cursor: pointer;" onclick="generatePDF()">Generate PDF</button>';
+        echo '<button id="generate-pdf" style="background-color: #007bff; color: #fff; padding: 10px 20px; border: none; border-radius: 5px; margin-top: 10px;margin-right:20px ;cursor: pointer;" onclick="generatePDF()">Generate PDF</button>';
         echo '<a href="http://localhost:8080/Bharat-Temple-Tourism/User/Dashboard/myBooking.php" style="display: inline-block; padding: 10px 20px; background-color: #28a745; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 10px;">Find Tour Details</a>';
     }
     ?>

@@ -4,7 +4,11 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: ../index.php");
     exit();
 }
-require_once '../../Admin/config.php'; // Include the PDO connection file
+require_once "../../Admin/config.php";
+$stmt = $conn->prepare("SELECT * FROM admin");
+$stmt->execute();
+$data = $stmt->fetch(PDO::FETCH_ASSOC);
+$logo = $data['logo'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,13 +21,14 @@ require_once '../../Admin/config.php'; // Include the PDO connection file
     <meta name="keywords" content="Bharat, temple, tourism, cultural heritage, spirituality, architecture">
     <meta name="author" content="Official Dev Vineet">
     <meta property="og:title" content="Bharat Temple Tourism">
+    <link rel="icon" href="../../Admin/<?= $logo ?>" />
     <meta property="og:description" content="Explore the rich cultural heritage of Bharat through its ancient temples. Plan your trip to experience spirituality and architectural marvels.">
-    <meta property="og:image" content="Admin/uploads/<?= $logo ?>">
+    <meta property="og:image" content="../../Admin/<?= $logo ?>">
     <meta property="og:url" content="https://example.com/bharat-temple-tourism">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Bharat Temple Tourism">
     <meta name="twitter:description" content="Explore the rich cultural heritage of Bharat through its ancient temples. Plan your trip to experience spirituality and architectural marvels.">
-    <meta name="twitter:image" content="Admin/uploads/<?= $logo ?>">
+    <meta name="twitter:image" content="../../Admin/<?= $logo ?>">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>

@@ -32,7 +32,6 @@ if ($stmt->rowCount() > 0) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve updated values from the form
     $startDate = $_POST['startDate'];
-    $day = $_POST['day'];
     $person = $_POST['person'];
     $amount = $_POST['amount'];
     if ($bookingDetails['amount'] > $amount) {
@@ -56,9 +55,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt->rowCount() > 0) {
             $stmt->closeCursor();
             $stmt = null;
-            $stmt = $conn->prepare("UPDATE bookingtour SET bookingDate = :startDate, day = :day, person = :person, amount = :amount WHERE pnr = :pnr");
+            $stmt = $conn->prepare("UPDATE bookingtour SET bookingDate = :startDate, person = :person, amount = :amount WHERE pnr = :pnr");
             $stmt->bindParam(':startDate', $startDate);
-            $stmt->bindParam(':day', $day);
             $stmt->bindParam(':person', $person);
             $stmt->bindParam(':amount', $amount);
             // $stmt->bindParam(':status', 'Updated', PDO::PARAM_STR);
@@ -191,14 +189,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="date" class="form-control" id="startDate" name="startDate" required />
             </div>
             <div class="form-group">
-                <label for="day">Day:</label>
-                <input type="number" class="form-control" id="day" name="day" required />
-            </div>
-            <div class="form-group">
-                <label for="night">Night:</label>
-                <input type="number" class="form-control" id="night" readonly name="night" required />
-            </div>
-            <div class="form-group">
                 <label for="person">Person:</label>
                 <input type="number" class="form-control" id="person" value="1" name="person" required />
             </div>
@@ -214,47 +204,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        document.getElementById('startDate').min = new Date().toISOString().split('T')[0];
-        // validation for input
+        var currentDate = new Date();
+        // Calculate the date three days later
+        var threeDaysLater = new Date(currentDate);
+        threeDaysLater.setDate(currentDate.getDate() + 3);
+        // Set the minimum date for the input element with id 'startDate'
+        document.getElementById('startDate').min = threeDaysLater.toISOString().split('T')[0];
         $(document).ready(function() {
-            $('#day').on('input', function() {
-                // prevent input if value less than 1
-                if ($(this).val() < 1) {
-                    $(this).val(1);
-                }
-                var day = parseInt($(this).val());
-                var night = day - 1;
-                var person = parseInt($('#person').val());
-                if (day < 1) {
-                    $('#night').val(1);
-                    var amount = day * person * '<?= $price; ?>';
-                    $('#amount').val(amount);
-                } else {
-                    $('#night').val(night);
-                    var amount = day * person * '<?= $price; ?>';
-                    $('#amount').val(amount);
-                }
-            })
-        })
-        // validation for person and calculate amount 
-        $(document).ready(function() {
+            // Event listener for input changes on the person field
             $('#person').on('input', function() {
-                var person = $(this).val();
-                // prevent input if value less than 1
-                if (person < 1) {
-                    $(this).val(1);
-                    person = 1;
-                    // calculate day value ;
-                    var day = $('#day').val();
-                    var amount = day * person * '<?= $price; ?>';
-                    $('#amount').val(amount);
-                } else {
-                    var day = $('#day').val();
-                    var amount = day * person * '<?= $price; ?>';
-                    $('#amount').val(amount);
-                }
-            })
-        })
+                var numberOfPersons = parseInt($(this).val()); // Get the number of persons
+                // Calculate price based on the number of persons (assuming $10 per person)
+                var price = numberOfPersons * "<?= $tourDetails['price'] ?>"; // Adjust the price calculation based on your actual pricing logic
+                // Update the price input field with the calculated price
+                $('#amount').val(price); // Format price with two decimal places and prepend with '$'
+            });
+        });
         // form handling using ajax 
         $(document).ready(function() {
             $('#updateForm').submit(function(event) {
